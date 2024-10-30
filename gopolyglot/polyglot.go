@@ -2,7 +2,7 @@ package gopolyglot
 
 import (
 	"bufio"
-	"io"
+	"encoding/binary"
 	"os"
 )
 
@@ -21,32 +21,23 @@ func LoadFromFile(filepath string) ([]Entry, error) {
 	if err != nil {
 		return ret, err
 	}
+	defer f.Close()
 
 	reader := bufio.NewReader(f)
 
-	buf := make([]byte, 16, 16)
-
 	for {
-		_, err = io.ReadFull(reader, buf)
+		var entry Entry
+		err := binary.Read(reader, binary.BigEndian, &entry)
 		if err != nil {
 			break
 		}
-
-		var entry Entry
-
-		entry.Key = ReadBigEndian64(buf[0:8])
-		entry.Move = ReadBigEndian16(buf[8:10])
-		entry.Weight = ReadBigEndian16(buf[10:12])
-		entry.Learn = ReadBigEndian32(buf[12:16])
-
 		ret = append(ret, entry)
 	}
 
 	return ret, nil
 }
 
-// Is there a better way than writing these functions?
-// Yeah, probably using binary.Read() on the bufio buffer
+/*
 
 func ReadBigEndian64(b []byte) uint64 {
 	var ret uint64
@@ -76,3 +67,5 @@ func ReadBigEndian16(b []byte) uint16 {
 	ret += uint16(b[1]) << 0
 	return ret
 }
+
+*/
