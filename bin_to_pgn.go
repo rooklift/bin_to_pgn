@@ -2,16 +2,23 @@ package main
 
 import (
 	"fmt"
-	gcb "github.com/rooklift/bin_to_pgn/gochessboard"
+	// gcb "github.com/rooklift/bin_to_pgn/gochessboard"
+	poly "github.com/rooklift/bin_to_pgn/gopolyglot"
 )
 
 func main() {
 
-	board, _ := gcb.BoardFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	book, err := poly.LoadFromFile("C:\\Users\\Owner\\Documents\\Misc\\Chess\\Books\\komodo3.bin")
 
-	board, _ = board.ForceMove("e2e5")
-	board, _ = board.ForceMove("d7d5")
-	board, _ = board.ForceMove("e5d6")
+	if err != nil {
+		fmt.Printf("%v\n", err)
+		return
+	}
 
-	fmt.Printf("%v\n", board)
+	fmt.Printf("%v\n", book[0].Key)
+
+	// Start at startpos
+	// Find entries in polyglot book
+	// Recursively add next positions to tree
+	// Continue
 }
