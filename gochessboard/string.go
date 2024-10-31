@@ -29,10 +29,10 @@ func (self *Board) String() string {
 
 func (self *Board) CastlingString() string {
 	s := ""
-	if self.Castling & castle_white_kingside > 0 { s += "K" }
-	if self.Castling & castle_white_queenside > 0 { s += "Q" }
-	if self.Castling & castle_black_kingside > 0 { s += "k" }
-	if self.Castling & castle_black_queenside > 0 { s += "q" }
+	if self.Castling & CastleWhiteKingside > 0 { s += "K" }
+	if self.Castling & CastleWhiteQueenside > 0 { s += "Q" }
+	if self.Castling & CastleBlackKingside > 0 { s += "k" }
+	if self.Castling & CastleBlackQueenside > 0 { s += "q" }
 	return s
 }
 

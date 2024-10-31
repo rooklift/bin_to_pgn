@@ -56,10 +56,10 @@ func BoardFromFEN(fen string) (*Board, error) {
 		default: return nil, fmt.Errorf("BoardFromFEN: invalid to-move character")
 	}
 
-	if strings.Contains(tokens[2], "K") { board.Castling |= castle_white_kingside }
-	if strings.Contains(tokens[2], "Q") { board.Castling |= castle_white_queenside }
-	if strings.Contains(tokens[2], "k") { board.Castling |= castle_black_kingside }
-	if strings.Contains(tokens[2], "q") { board.Castling |= castle_black_queenside }
+	if strings.Contains(tokens[2], "K") { board.Castling |= CastleWhiteKingside }
+	if strings.Contains(tokens[2], "Q") { board.Castling |= CastleWhiteQueenside }
+	if strings.Contains(tokens[2], "k") { board.Castling |= CastleBlackKingside }
+	if strings.Contains(tokens[2], "q") { board.Castling |= CastleBlackQueenside }
 
 	i, err := IndexFromString(tokens[3])
 	if err != nil {

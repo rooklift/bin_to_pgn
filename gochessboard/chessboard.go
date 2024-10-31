@@ -5,13 +5,13 @@ import (
 )
 
 const (						// Bitmasks
-	castle_white_kingside	= 0b0001
-	castle_white_queenside	= 0b0010
-	castle_black_kingside 	= 0b0100
-	castle_black_queenside	= 0b1000
-	castle_white_both		= castle_white_kingside | castle_white_queenside
-	castle_black_both		= castle_black_kingside | castle_black_queenside
-	castle_all				= castle_white_both | castle_black_both
+	CastleWhiteKingside		= 0b0001
+	CastleWhiteQueenside	= 0b0010
+	CastleBlackKingside 	= 0b0100
+	CastleBlackQueenside	= 0b1000
+	CastleWhiteBoth			= CastleWhiteKingside | CastleWhiteQueenside
+	CastleBlackBoth			= CastleBlackKingside | CastleBlackQueenside
+	CastleAll				= CastleWhiteBoth | CastleBlackBoth
 )
 
 type Board struct {
@@ -73,25 +73,25 @@ func (self *Board) ForceMove(mv string) (*Board, error) {		// No legality checks
 	// Clear castling permissions if the king moved...
 
 	if piece == K_w {
-		ret.Castling &= (castle_all ^ castle_white_both)
+		ret.Castling &= (CastleAll ^ CastleWhiteBoth)
 	}
 	if piece == K_b {
-		ret.Castling &= (castle_all ^ castle_black_both)
+		ret.Castling &= (CastleAll ^ CastleBlackBoth)
 	}
 
 	// Clear castling permission if rook moved (or any other piece starting at the rook's spot)...
 
 	if start == a8 {
-		ret.Castling &= (castle_all ^ castle_black_queenside)
+		ret.Castling &= (CastleAll ^ CastleBlackQueenside)
 	}
 	if start == h8 {
-		ret.Castling &= (castle_all ^ castle_black_kingside)
+		ret.Castling &= (CastleAll ^ CastleBlackKingside)
 	}
 	if start == a1 {
-		ret.Castling &= (castle_all ^ castle_white_queenside)
+		ret.Castling &= (CastleAll ^ CastleWhiteQueenside)
 	}
 	if start == h1 {
-		ret.Castling &= (castle_all ^ castle_white_kingside)
+		ret.Castling &= (CastleAll ^ CastleWhiteKingside)
 	}
 
 	// Promotions...

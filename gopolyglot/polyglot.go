@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"os"
 	"sort"
+
+	gcb "github.com/rooklift/bin_to_pgn/gochessboard"
 )
 
 type Entry struct {
@@ -123,4 +125,50 @@ func ExtractNeighbours(book []Entry, index int) []Entry {
 	}
 
 	return ret
+}
+
+func KeyFromBoard(board *gcb.Board) uint64 {
+
+	var key uint64
+
+	for x := 0; x < 8; x++ {
+		for y := 0; y < 8; y++ {
+			piece := board.State[y * 8 + x]
+			if piece == gcb.EMPTY {
+				continue
+			}
+			var polyglot_kind int
+			switch piece {
+				case gcb.P_b: polyglot_kind = 0
+				case gcb.P_w: polyglot_kind = 1
+				case gcb.N_b: polyglot_kind = 2
+				case gcb.N_w: polyglot_kind = 3
+				case gcb.B_b: polyglot_kind = 4
+				case gcb.B_w: polyglot_kind = 5
+				case gcb.R_b: polyglot_kind = 6
+				case gcb.R_w: polyglot_kind = 7
+				case gcb.Q_b: polyglot_kind = 8
+				case gcb.Q_w: polyglot_kind = 9
+				case gcb.K_b: polyglot_kind = 10
+				case gcb.K_w: polyglot_kind = 11
+			}
+			index := (64 * polyglot_kind) + (8 * (7 - y)) + x
+			key ^= PolyglotPieceXorVals[index]
+		}
+	}
+
+	if board.Castling & gcb.CastleWhiteKingside  > 0 { key ^= PolyglotCastleXorVals[0] }
+	if board.Castling & gcb.CastleWhiteQueenside > 0 { key ^= PolyglotCastleXorVals[1] }
+	if board.Castling & gcb.CastleBlackKingside  > 0 { key ^= PolyglotCastleXorVals[2] }
+	if board.Castling & gcb.CastleBlackQueenside > 0 { key ^= PolyglotCastleXorVals[3] }
+
+	if board.EP > 0 {
+		x := gcb.XFromIndex(board.EP)
+		key ^= PolyglotEnPassantXorVals[x]
+	}
+
+	if board.Wmove { key ^= PolyglotActiveXorVal }
+
+	return key
+
 }
