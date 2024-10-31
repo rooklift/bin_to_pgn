@@ -8,6 +8,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"os"
+	"sort"
 )
 
 type Entry struct {
@@ -80,14 +81,46 @@ func ParseMove(b uint16) string {
 	return fmt.Sprintf("%c%c%c%c%s", from_file_c, from_row_c, to_file_c, to_row_c, prom_string)
 }
 
-func Probe(book []Entry, key uint64) []Entry {
+func Probe(book []Entry, target uint64) []Entry {
+
+	// See the Golang docs for how sort.Search works.
+
+	i := sort.Search(len(book), func(i int) bool { return book[i].Key >= target })
+
+	if i < len(book) && book[i].Key == target {
+		return ExtractNeighbours(book, i)
+	} else {
+		return nil
+	}
+}
+
+func ExtractNeighbours(book []Entry, index int) []Entry {
+
+	// Given an index into the book, return all entries that have that key.
+
+	target := book[index].Key
+
+	// Our Probe() function is actually guaranteed to locate the very first
+	// such item, rendering the first half of this function redundant. Meh.
+
+	for {
+		if index == 0 || book[index - 1].Key != target {
+			break
+		}
+		index -= 1
+	}
+
+	// So index is now the very first of the correct entries...
 
 	var ret []Entry
 
-	// lower := 0
-	// upper := len(book) - 1
-
-	// TODO - binary search
+	for {
+		ret = append(ret, book[index])
+		if index >= len(book) - 1 || book[index + 1].Key != target {
+			break
+		}
+		index += 1
+	}
 
 	return ret
 }
