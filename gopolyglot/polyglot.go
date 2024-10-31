@@ -72,9 +72,9 @@ func ParseMove(b uint16) string {
 
 	switch promotion {
 		case 1: prom_string = "n"
-		case 2: prom_string = "n"
-		case 3: prom_string = "n"
-		case 4: prom_string = "n"
+		case 2: prom_string = "b"
+		case 3: prom_string = "r"
+		case 4: prom_string = "q"
 		default: prom_string = ""
 	}
 
@@ -85,10 +85,10 @@ func Probe(book []Entry, target uint64) []Entry {
 
 	// See the Golang docs for how sort.Search works.
 
-	i := sort.Search(len(book), func(i int) bool { return book[i].Key >= target })
+	index := sort.Search(len(book), func(i int) bool { return book[i].Key >= target })
 
-	if i < len(book) && book[i].Key == target {
-		return ExtractNeighbours(book, i)
+	if index < len(book) && book[index].Key == target {
+		return ExtractNeighbours(book, index)
 	} else {
 		return nil
 	}
