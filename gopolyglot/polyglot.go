@@ -24,12 +24,16 @@ func (self *Entry) MoveString() string {
 	return ParseMove(self.Move)
 }
 
-func LoadFromFile(filepath string) ([]Entry, error) {
+type Book struct {
+	Entries	[]Entry
+}
+
+func LoadFromFile(filepath string) (*Book, error) {
 
 	var previous_key uint64 = 0
 	var have_warned bool = false
 
-	var ret []Entry
+	ret := new(Book)
 
 	f, err := os.Open(filepath)
 	if err != nil {
@@ -50,7 +54,7 @@ func LoadFromFile(filepath string) ([]Entry, error) {
 			have_warned = true			// TODO - maybe we should just sort the thing.
 		}
 		previous_key = entry.Key
-		ret = append(ret, entry)
+		ret.Entries = append(ret.Entries, entry)
 	}
 
 	return ret, nil
@@ -83,30 +87,30 @@ func ParseMove(b uint16) string {
 	return fmt.Sprintf("%c%c%c%c%s", from_file_c, from_row_c, to_file_c, to_row_c, prom_string)
 }
 
-func Probe(book []Entry, target uint64) []Entry {
+func (self *Book) Probe(target uint64) []Entry {
 
 	// See the Golang docs for how sort.Search works.
 
-	index := sort.Search(len(book), func(i int) bool { return book[i].Key >= target })
+	index := sort.Search(len(self.Entries), func(i int) bool { return self.Entries[i].Key >= target })
 
-	if index < len(book) && book[index].Key == target {
-		return ExtractNeighbours(book, index)
+	if index < len(self.Entries) && self.Entries[index].Key == target {
+		return self.ExtractNeighbours(index)
 	} else {
 		return nil
 	}
 }
 
-func ExtractNeighbours(book []Entry, index int) []Entry {
+func (self *Book) ExtractNeighbours(index int) []Entry {
 
 	// Given an index into the book, return all entries that have that key.
 
-	target := book[index].Key
+	target := self.Entries[index].Key
 
 	// Our Probe() function is actually guaranteed to locate the very first
 	// such item, rendering the first half of this function redundant. Meh.
 
 	for {
-		if index == 0 || book[index - 1].Key != target {
+		if index == 0 || self.Entries[index - 1].Key != target {
 			break
 		}
 		index -= 1
@@ -117,8 +121,8 @@ func ExtractNeighbours(book []Entry, index int) []Entry {
 	var ret []Entry
 
 	for {
-		ret = append(ret, book[index])
-		if index >= len(book) - 1 || book[index + 1].Key != target {
+		ret = append(ret, self.Entries[index])
+		if index >= len(self.Entries) - 1 || self.Entries[index + 1].Key != target {
 			break
 		}
 		index += 1
