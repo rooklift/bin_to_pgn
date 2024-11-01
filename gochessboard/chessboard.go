@@ -33,6 +33,22 @@ func (self *Board) ForceMove(mv string) (*Board, error) {		// No legality checks
 		return nil, fmt.Errorf("Invalid move string")
 	}
 
+	if self.State[e1] == K_w {
+		if mv == "e1h1" {
+			mv = "e1g1"
+		} else if mv == "e1a1" {
+			mv = "e1c1"
+		}
+	}
+
+	if self.State[e8] == K_b {
+		if mv == "e8h8" {
+			mv = "e8g8"
+		} else if mv == "e8a8" {
+			mv = "e8c8"
+		}
+	}
+
 	start, err1 := IndexFromString(mv[0:2])
 	end, err2 := IndexFromString(mv[2:4])
 	if err1 != nil || err2 != nil {
