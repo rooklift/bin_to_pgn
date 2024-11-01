@@ -34,7 +34,7 @@ func recurse(node *tree.Node, board *gcb.Board, book *poly.Book, depth int) {
 	key := poly.KeyFromBoard(board)
 	entries := book.Probe(key)
 
-	if depth > 20 {
+	if depth > 10 {
 		return
 	}
 
