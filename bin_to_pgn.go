@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	// "math/rand"
+	"os"
 
 	gcb "github.com/rooklift/bin_to_pgn/gochessboard"
 	tree "github.com/rooklift/bin_to_pgn/gochesstree"
@@ -14,17 +15,17 @@ func main() {
 	book, err := poly.LoadFromFile("C:\\Users\\Owner\\Documents\\Misc\\Chess\\Books\\komodo3.bin")
 
 	if err != nil {
-		fmt.Printf("%v\n", err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		return
 	}
 
-	// fmt.Printf("Book length: %d\n", len(book.Entries))
+	fmt.Fprintf(os.Stderr, "Book length: %d\n", len(book.Entries))
 
 	node := tree.NewNode(nil, "")
 	board, _ := gcb.BoardFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
 	recurse(node, board, book, 0)
-	// fmt.Printf("%v nodes\n", node.CountNodes())
+	fmt.Fprintf(os.Stderr, "%v nodes\n", node.CountNodes())
 	fmt.Printf("%v\n", make_string(node, false))
 }
 
@@ -33,7 +34,7 @@ func recurse(node *tree.Node, board *gcb.Board, book *poly.Book, depth int) {
 	key := poly.KeyFromBoard(board)
 	entries := book.Probe(key)
 
-	if depth > 50 {
+	if depth > 20 {
 		return
 	}
 
