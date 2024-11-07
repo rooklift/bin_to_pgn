@@ -31,7 +31,7 @@ func print_lines_recurse(board *gcb.Board, book *poly.Book, moves []string) {
 	key := poly.KeyFromBoard(board)
 	entries := book.Probe(key)
 
-	if len(moves) > 10 || len(entries) == 0 {
+	if len(moves) > 20 || len(entries) == 0 {
 		fmt.Printf("[Event \"Book from BIN\"]\n\n")
 		for _, move := range moves {
 			fmt.Printf("%s ", move)
